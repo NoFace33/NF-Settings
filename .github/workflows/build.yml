@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'  # Specify a concrete version
+          python-version: '3.x'
       - name: Install dependencies
         run: pip install requests
       - name: Run script
@@ -25,6 +25,10 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
+          
+          # Pull latest changes with rebase to avoid merge commits
+          git pull --rebase origin main
+          
           git add whitelist.txt
           if git diff --cached --quiet; then
             echo "No changes to commit."
@@ -32,5 +36,5 @@ jobs:
             echo "Changes detected, committing..."
             git commit -m "Auto-update whitelist"
             echo "Pushing to remote..."
-            git push
+            git push origin main
           fi
