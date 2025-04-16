@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensures the full commit history is fetched
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -32,7 +34,7 @@ jobs:
           git add whitelist.txt
           git diff --cached --quiet || git commit -m "Auto-update whitelist"
 
-          # Pull the latest changes from the remote repository to avoid fast-forward errors
+          # Ensure we pull the latest changes from the remote branch and rebase them
           git pull origin main --rebase
 
           # Push changes to the repository
