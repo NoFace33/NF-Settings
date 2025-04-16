@@ -31,16 +31,17 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          
+
+          echo "Fetching latest changes from remote..."
+          git pull origin main --rebase || { echo 'Rebase failed'; exit 1; }
+
           git add whitelist.txt
 
-          # Only commit if there are changes
           if ! git diff --cached --quiet; then
+            echo "Committing changes..."
             git commit -m "Auto-update whitelist"
+            echo "Pushing to remote..."
+            git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main || { echo 'Push failed'; exit 1; }
+          else
+            echo "No changes to commit."
           fi
-
-          # Make sure we have the latest from origin
-          git pull origin main --rebase
-
-          # Push using PAT
-          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
