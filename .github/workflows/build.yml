@@ -31,4 +31,18 @@ jobs:
           git config user.email "actions@github.com"
           git add whitelist.txt
           git diff --cached --quiet || git commit -m "Auto-update whitelist"
+          
+          # Debugging Step: Show the git repository URL
+          echo "GitHub Repository URL: https://github.com/${{ github.repository }}"
+
+          # Debugging Step: Print current branch
+          echo "Current Branch: $(git branch --show-current)"
+
+          # Debugging Step: Show remote settings
+          git remote -v
+
+          # Debugging Step: Check the status of the current branch
+          git status
+
+          # Debugging Step: Make sure the correct URL is being used
           git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
