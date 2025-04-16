@@ -1,0 +1,32 @@
+name: Generate Whitelist
+
+on:
+  schedule:
+    - cron: "0 0 * * 0"  # Weekly on Sunday at midnight UTC
+  workflow_dispatch:     # Manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run script
+        run: python generate-whitelist.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add whitelist.txt
+          git diff --cached --quiet || git commit -m "Auto-update whitelist"
+          git push
