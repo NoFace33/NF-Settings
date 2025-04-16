@@ -25,23 +25,23 @@ jobs:
       - name: Run script
         run: python Scripts/generate-whitelist.py
 
-- name: Commit and push if changed
-  env:
-    PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-  run: |
-    git config user.name "github-actions"
-    git config user.email "actions@github.com"
+      - name: Commit and push if changed
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
 
-    echo "Pulling latest..."
-    git pull origin main --ff-only || { echo 'Pull failed'; exit 1; }
+          echo "Pulling latest..."
+          git pull origin main --ff-only || { echo 'Pull failed'; exit 1; }
 
-    echo "Checking for changes..."
-    git add whitelist.txt
-    if git diff --cached --quiet; then
-      echo "No changes to commit."
-    else
-      echo "Changes detected, committing..."
-      git commit -m "Auto-update whitelist"
-      echo "Pushing to remote..."
-      git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main || { echo 'Push failed'; exit 1; }
-    fi
+          echo "Checking for changes..."
+          git add whitelist.txt
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            echo "Changes detected, committing..."
+            git commit -m "Auto-update whitelist"
+            echo "Pushing to remote..."
+            git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main || { echo 'Push failed'; exit 1; }
+          fi
