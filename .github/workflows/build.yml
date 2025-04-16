@@ -31,4 +31,4 @@ jobs:
           git config user.email "actions@github.com"
           git add whitelist.txt
           git diff --cached --quiet || git commit -m "Auto-update whitelist"
-          git push https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }}.git HEAD:main
+          git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
