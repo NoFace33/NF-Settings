@@ -1,41 +1,30 @@
 name: Generate Whitelist
-
 on:
   schedule:
-    - cron: "0 0 * * 0"  # Weekly on Sunday at midnight UTC
+    - cron: "0 0 * * 0"  # Fixed spacing - Weekly on Sunday at midnight UTC
   workflow_dispatch:     # Manual trigger
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write    # Explicitly grant write permissions
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Full history for git pull to work
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
-
+          python-version: '3.10'  # Specify a concrete version
       - name: Install dependencies
         run: pip install requests
-
       - name: Run script
         run: python Scripts/generate-whitelist.py
-
       - name: Commit and push if changed
-        env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-
-          echo "Pulling latest..."
-          git pull origin main --ff-only || { echo 'Pull failed'; exit 1; }
-
-          echo "Checking for changes..."
           git add whitelist.txt
           if git diff --cached --quiet; then
             echo "No changes to commit."
@@ -43,5 +32,5 @@ jobs:
             echo "Changes detected, committing..."
             git commit -m "Auto-update whitelist"
             echo "Pushing to remote..."
-            git push https://x-access-token:${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main || { echo 'Push failed'; exit 1; }
+            git push
           fi
