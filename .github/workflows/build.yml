@@ -24,9 +24,11 @@ jobs:
         run: python Scripts/generate-whitelist.py
 
       - name: Commit and push if changed
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add whitelist.txt
           git diff --cached --quiet || git commit -m "Auto-update whitelist"
-          git push
+          git push https://x-access-token:${PAT_TOKEN}@github.com/${{ github.repository }}.git HEAD:main
